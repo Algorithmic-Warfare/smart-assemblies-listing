@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Smart Stuff Table</title>
+    <style>
+      table {
+        border-collapse: collapse;
+        width: 100%;
+      }
+      th,
+      td {
+        border: 1px solid black;
+        padding: 8px;
+        text-align: left;
+      }
+      th {
+        background-color: #f2f2f2;
+      }
+    </style>
+  </head>
+  <body></body>
+  <script>
+    async function getData() {
+      const url =
+        "https://blockchain-gateway-stillness.live.tech.evefrontier.com/smartassemblies";
+      try {
+        const response = await fetch(url);
+        if (!response.ok) {
+          throw new Error(`Response status: ${response.status}`);
+        }
+
+        const json = await response.json();
+        // display data in an HTML Table
+        let table = document.createElement("table");
+        let thead = document.createElement("thead");
+        let tbody = document.createElement("tbody");
+        let tr = document.createElement("tr");
+        for (let key in json[0]) {
+          let th = document.createElement("th");
+          if (
+            [
+              "state",
+              "solarSystem",
+              "name",
+              "ownerName",
+              "assemblyType",
+            ].includes(key)
+          ) {
+            th.textContent = key;
+            tr.appendChild(th);
+          }
+        }
+        thead.appendChild(tr);
+        table.appendChild(thead);
+        for (let i = 0; i < json.length; i++) {
+          let tr = document.createElement("tr");
+          for (let key in json[i]) {
+            if (
+              [
+                "state",
+                "solarSystem",
+                "name",
+                "ownerName",
+                "assemblyType",
+              ].includes(key)
+            ) {
+              let td = document.createElement("td");
+              // check if the key value is an object
+              if (typeof json[i][key] === "object") {
+                let dataArray = [];
+                dataArray.push(json[i][key]);
+                let innerTable = createTable(dataArray); // check if the key is solarSystem
+                td.appendChild(innerTable);
+              } else {
+                td.textContent = json[i][key];
+              }
+              tr.appendChild(td);
+              // if (key === "solarSystem") {
+              //   console.log(createTable(json[i][key]));
+
+              //   let test = new URL(
+              //     `showinfo:5//${json[i][key].solarSystemId}>${json[i][key].solarSystemName}`
+              //   );
+              //   td.innerHTML = test;
+              //   tr.appendChild(td);
+              // } else {
+              //   td.textContent = json[i][key];
+              //   tr.appendChild(td);
+              // }
+            }
+          }
+          tbody.appendChild(tr);
+        }
+        table.appendChild(tbody);
+        document.body.appendChild(table);
+
+        console.log(json);
+      } catch (error) {
+        console.error(error.message);
+      }
+    }
+
+    getData();
+
+    // function to create a table from data and return the table element
+    createTable = (data) => {
+      console.log(data);
+      // create table headers based on the object keys
+      let table = document.createElement("table");
+      let thead = document.createElement("thead");
+      let tbody = document.createElement("tbody");
+      //setup the table headers
+      let tr = document.createElement("tr");
+      for (let key in data[0]) {
+        let th = document.createElement("th");
+        th.textContent = key;
+        tr.appendChild(th);
+      }
+      thead.appendChild(tr);
+      table.appendChild(thead);
+      // setup the table body
+      for (let i = 0; i < data.length; i++) {
+        let tr = document.createElement("tr");
+        for (let key in data[i]) {
+          let td = document.createElement("td");
+          // check if the key value is an object or array of objects
+          if (typeof data[i][key] === "object") {
+            let dataArray = [];
+            dataArray.push(data[i][key]);
+            let innerTable = createTable(dataArray);
+            td.appendChild(innerTable);
+          } else if (Array.isArray(data[i][key])) {
+            let dataArray = data[i][key];
+            let innerTable = createTable(dataArray);
+            td.appendChild(innerTable);
+          } else {
+            td.textContent = data[i][key];
+          }
+          tr.appendChild(td);
+        }
+        tbody.appendChild(tr);
+      }
+      table.appendChild(tbody);
+      console.log(table);
+      return table;
+    };
+
+    // // get json data from the server
+    // fetch(
+    //   "https://blockchain-gateway-stillness.live.tech.evefrontier.com/smartassemblies"
+    // ).then((response) => {
+    //   // console log the real value
+    //   console.log(response);
+    //   // get the json data
+    //   response.json().then((data) => {
+    //     // console log the json data
+    //     console.log(data);
+
+    // 		for(let i = 0; i < data.length; i++){
+    // 			// create table headers based on the object keys
+    // 			if(i === 0){
+    // 				let table = document.createElement("table");
+    // 				let thead = document.createElement("thead");
+    // 				let tr = document.createElement("tr");
+    // 				for(let key in data[i]){
+    // 					let th = document.createElement("th");
+    // 					th.textContent = key;
+    // 					tr.appendChild(th);
+    // 				}
+    // 				thead.appendChild(tr);
+    // 				table.appendChild(thead);
+    // 				document.body.appendChild(table);
+    // 			}
+    // 		}
+    //   });
+    // });
+  </script>
+</html>
